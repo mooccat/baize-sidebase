@@ -1,23 +1,21 @@
 <script setup lang="ts">
 import { IMessage } from '~~/utils/chat'
 
-const messages:IMessage[] = ref([])
+const messages = ref<IMessage[]>([])
 // 添加user message
 const addUserMessage = (content:string) => {
-  console.log('addUserMessage', content)
   messages.value.push({
     content,
     role: 'user'
   })
 }
 // 添加bot message
-const addBotMessage = (content:string) => {
-  console.log('addBotMessage', content)
-  messages.value.push({
-    content,
-    role: 'assistant'
-  })
-}
+// const addBotMessage = (content:string) => {
+//   messages.value.push({
+//     content,
+//     role: 'assistant'
+//   })
+// }
 // 添加message
 const addMessage = (message:IMessage) => {
   messages.value.push(message)
@@ -60,8 +58,7 @@ const btnLoading = ref(false)
       class="flex justify-center p-4 fixed bottom-0 w-full"
     >
       <n-input
-        v-model:value="
-          value"
+        v-model:value="value"
         class="border border-gray-400 rounded-full w-full"
         type="input"
         placeholder="输入消息"

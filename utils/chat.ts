@@ -1,11 +1,12 @@
+
 import axios from 'axios'
-const apiKey = ''
 export interface IMessage {
     role: 'system' | 'user' |'assistant',
     content: string
 }
-const chat = async (
-  messages:IMessage[] = [
+const apiKey = process.env.OPENAPI_KEY
+export const chat = async (
+  messages = [
     { role: 'system', content: 'You are a helpful assistant.' },
     { role: 'user', content: 'Who won the world series in 2020?' }
   ]

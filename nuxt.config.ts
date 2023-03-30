@@ -5,6 +5,7 @@ export default defineNuxtConfig({
     '@nuxtjs/tailwindcss',
     '@huntersofbook/naive-ui-nuxt'
   ],
+  auth: { isEnabled: false, origin: 'http://42.194.137.28:3000' },
   build: {
     transpile: [
       'trpc-nuxt'

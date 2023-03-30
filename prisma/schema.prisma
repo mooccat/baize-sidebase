@@ -22,6 +22,7 @@ model Template {
   id          String    @id @default(uuid())
   name        String
   description String
+  key         String    @unique
   prompt      String
   createdAt   DateTime  @default(now())
   updatedAt   DateTime  @updatedAt

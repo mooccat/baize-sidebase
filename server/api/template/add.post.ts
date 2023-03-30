@@ -6,7 +6,8 @@ export default defineEventHandler(async (event) => {
       name: body.name,
       description: body.description,
       categoryId: body.categoryId,
-      prompt: body.prompt
+      prompt: body.prompt,
+      key: body.key
     }
   })
   return res

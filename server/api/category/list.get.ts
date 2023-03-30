@@ -10,4 +10,4 @@
  * export type Context = inferAsyncReturnType<typeof createContext>
  * ```
  */
-export default defineEventHandler(event => event.context.prisma.template.findMany())
+export default defineEventHandler(event => event.context.prisma.category.findMany())
