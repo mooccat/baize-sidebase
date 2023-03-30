@@ -2,12 +2,13 @@
 // learn more about it in the docs: https://pris.ly/d/prisma-schema
 
 generator client {
-  provider = "prisma-client-js"
+  provider      = "prisma-client-js"
+  binaryTargets = ["native", "debian-openssl-1.1.x"]
 }
 
 datasource db {
   // NOTE: You probably want to change this to another database later on
-  provider = "sqlite"
+  provider = "postgresql"
 
   // This value is read from the .env file.
   url = env("DATABASE_URL")

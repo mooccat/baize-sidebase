@@ -1,4 +1,5 @@
 <script setup lang="ts">
+import { useClipboard } from '@vueuse/core'
 const route = useRoute()
 const key = route.params.key as string
 const { data: template } = useFetch(`/api/template/${key}`)
@@ -18,14 +19,15 @@ const submit = async () => {
   loading.value = false
 }
 const notification = useNotification()
+const { text, copy, copied, isSupported } = useClipboard({ legacy: true })
 
-const copy = (text: string) => {
-  navigator.clipboard.writeText(text)
-  notification.success({
-    title: '复制成功',
-    message: '已复制到剪贴板'
-  })
-}
+// const copy = (text: string) => {
+//   navigator.clipboard.writeText(text)
+//   notification.success({
+//     title: '复制成功',
+//     message: '已复制到剪贴板'
+//   })
+// }
 
 </script>
 
@@ -35,7 +37,7 @@ const copy = (text: string) => {
   >
     <a
       class="w-24"
-      href="/"
+      href="/template/list"
     ><div
       class="flex w-24 flex-row items-center rounded-lg bg-gray-200 py-2 pl-2 text-sm"
     >
@@ -84,7 +86,8 @@ const copy = (text: string) => {
           placeholder="输入内容"
         />
         <n-button type="primary" :loading="loading" @click="copy(resData)">
-          全部复制
+          <span v-if="!copied">全部复制</span>
+          <span v-else>已经复制!</span>
         </n-button>
       </div>
     </div>
