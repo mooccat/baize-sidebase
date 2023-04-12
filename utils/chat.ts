@@ -1,4 +1,5 @@
 
+import { Duplex, Readable } from 'stream'
 import axios from 'axios'
 import { createParser, ParsedEvent, ReconnectInterval } from 'eventsource-parser'
 import { fetch } from 'undici'
@@ -52,7 +53,6 @@ export const chatByStream = async (messages = [
       method: 'POST'
     }
   )
-  console.log(res.body)
   return res
 }
 
@@ -96,5 +96,42 @@ export const parseOpenAIStream = (rawResponse: Response) => {
     }
   })
 
+  return stream
+}
+
+export const parseOpenAIStreamToRes = async (rawResponse: Response) => {
+  const encoder = new TextEncoder()
+  const decoder = new TextDecoder()
+  const stream = new Duplex({
+    write (chunk, encoding, callback) {
+      console.log(chunk)
+      callback()
+    },
+    read () {
+
+    }
+  })
+
+  const streamParser = (event: ParsedEvent | ReconnectInterval) => {
+    if (event.type === 'event') {
+      const data = event.data
+      if (data === '[DONE]') {
+        return
+      }
+      try {
+        const json = JSON.parse(data)
+        const text = json.choices[0].delta?.content || ''
+        const queue = encoder.encode(text)
+        stream.write(queue)
+      } catch (e) {
+        // controller.error(e)
+      }
+    }
+  }
+
+  const parser = createParser(streamParser)
+  for await (const chunk of rawResponse.body as any) {
+    parser.feed(decoder.decode(chunk))
+  }
   return stream
 }

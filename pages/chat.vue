@@ -16,11 +16,39 @@ const addBotMessage = (content:string) => {
     role: 'assistant'
   })
 }
+
 // 添加message
 const addMessage = (message:IMessage) => {
   messages.value.push(message)
 }
+// message逐字添加
+const addMessageByChar = () => {
+  const message = messages.value[currentMessage.currentMsgIndex]
+  if (message) {
+    if (currentMessage.currentCharIndex < currentMessage.content.length) {
+      message.content += currentMessage.content[currentMessage.currentCharIndex]
+      currentMessage.currentCharIndex++
+    }
+  } else {
+    addBotMessage(currentMessage.content[currentMessage.currentCharIndex])
+    currentMessage.currentCharIndex++
+  }
+  if (!currentMessage.fisnished || currentMessage.currentCharIndex < currentMessage.content.length) {
+    setTimeout(() => {
+      addMessageByChar()
+    }, 200)
+  } else {
+    currentMessage.currentCharIndex = 0
+    currentMessage.fisnished = false
+  }
+}
 
+const currentMessage = reactive({
+  content: '',
+  currentMsgIndex: 0,
+  currentCharIndex: 0,
+  fisnished: false
+})
 // 提交message
 const submitMessage = async (content:string) => {
   btnLoading.value = true
@@ -28,24 +56,30 @@ const submitMessage = async (content:string) => {
   addUserMessage(content)
   const res = await $fetch('/api/chat/chatByStream', { method: 'POST', body: messages.value, responseType: 'stream' })
   const messageLength = messages.value.length
+  currentMessage.content = ''
+  currentMessage.fisnished = false
   const decoder = new TextDecoder('utf-8')
-
   const reader = res.getReader()
   while (true) {
     const { done, value } = await reader.read()
     if (done) {
-      console.log('Stream finished')
       input.value = ''
       btnLoading.value = false
+      currentMessage.fisnished = true
       break
     }
-    if (messages.value[messageLength]) {
-      messages.value[messageLength].content += decoder.decode(value)
-    } else {
-      addBotMessage(decoder.decode(value))
-    }
+    currentMessage.content += decoder.decode(value)
   }
 }
+watch(() => currentMessage.content, (newVal, oldVal) => {
+  if (oldVal === '') {
+    currentMessage.currentMsgIndex = messages.value.length
+    currentMessage.fisnished = false
+    addMessageByChar()
+  } else {
+    addMessageByChar()
+  }
+})
 const input = ref('')
 const btnLoading = ref(false)
 </script>
