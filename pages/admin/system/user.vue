@@ -1,9 +1,35 @@
 <script setup lang="ts">
-const { $client } = useNuxtApp()
+import { User } from '@prisma/client'
+import type { DataTableColumns } from 'naive-ui'
 
-const hello = await $client.hello.useQuery({ text: 'client' })
-const hello1 = await $client.example.useQuery()
-// const text = await $client.example.useQuery();
+const { $client } = useNuxtApp()
+const loading = ref(false)
+const tableData = ref<User[]>([])
+const columns = ref<DataTableColumns<User>>([
+  {
+    title: 'id',
+    key: 'id'
+  },
+  {
+    title: '名称',
+    key: 'name'
+  },
+  {
+    title: '邮箱',
+    key: 'email'
+  }
+])
+const getTableData = async () => {
+  loading.value = true
+  const res = await $client.user.list.query()
+  console.log(res)
+  tableData.value = res
+  // pagination.total = res.data.value?.total || 0
+  loading.value = false
+}
+onMounted(() => {
+  getTableData()
+})
 </script>
 
 <template>
