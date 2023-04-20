@@ -84,3 +84,26 @@ model ChatMessage {
   ChatLog           ChatLog?  @relation(fields: [chatLogId], references: [id])
   chatLogId         String?
 }
+
+model Dict {
+  id        String     @id @default(uuid())
+  dict_code String     @unique // 词典编码
+  dict_desc String // 词典描述
+  dict_item DictItem[]
+  createdAt DateTime   @default(now())
+  updatedAt DateTime   @updatedAt
+  deletedAt DateTime?
+}
+
+model DictItem {
+  id        String    @id @default(uuid())
+  item_code String // 词典项编码
+  item_desc String // 词典项描述
+  createdAt DateTime  @default(now())
+  updatedAt DateTime  @updatedAt
+  deletedAt DateTime?
+  Dict      Dict?     @relation(fields: [dict_code], references: [id])
+  dict_code String?
+
+  @@unique([dict_code, item_code])
+}

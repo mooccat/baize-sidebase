@@ -1,6 +1,7 @@
 import { z } from 'zod'
 import { publicProcedure, router } from '../trpc'
 import { userRouter } from './user'
+import { dictRouter } from './dict'
 
 export const appRouter = router({
   hello: publicProcedure
@@ -16,7 +17,8 @@ export const appRouter = router({
       }
     }),
   example: publicProcedure.query(({ ctx }) => { return { greeting: ctx.prisma.example.findMany() } }),
-  user: userRouter
+  user: userRouter,
+  dict: dictRouter
 })
 
 // export type definition of API
